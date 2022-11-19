@@ -86,8 +86,9 @@ void example1()
 
     uint8_t len_out = neon_build_message(&parser1, (uint8_t*)&message_one, sizeof(myMsg1_t), 0x03, buffer_out);
     
-    /* In a real application , you will likely call
-       uart_write(buffer_out, len_out); */
+    /* In a real application, you will likely call (Arduino-style)
+    *   Serial.write(buffer_out, len_out); 
+    */
     print_debug(buffer_out, len_out);
    
     // parse the built buffer to get the initial data

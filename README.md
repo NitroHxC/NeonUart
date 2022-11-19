@@ -1,13 +1,13 @@
 # NeonUart
 
 ### What is it?
-This is my take at developing a plug-n-play and easy to understand UART protocol.
+This is my take at developing *yet another* plug-n-play and easy to understand UART protocol.
 
-Usually I find myself in need of a fast implementation just to send small commands between Microcontrollers, and having a simple "drag-n-drop-n-play" API with few functions for TX and RX some data is of paramount importance. 
+Usually I find myself in need of a fast implementation just to send small commands between Microcontrollers, and having a simple "drag-n-drop-n-play" library with few API functions for TX and RX some data is of paramount importance. 
 
 I wanted something in plain C as close as an "header-only" lib (not really, just .h and .c) with no dependencies whatsoever.
 
-Even if I work with MCUs, I developed and tested using a MSVC console app.
+Even if I work with MCUs, I developed and tested using the MSVC console app you find in this repo... 'cause it's just faster!
 
 ### How does it work?
 
@@ -17,13 +17,13 @@ So basically we just define few things that are going to be linked together by c
 - the `msg ID` (between 0 and 255 . A "Family" byte is already there for future dev, so we'll have up to 65535 messages)
 - the msg struct (the actual stuff you want to send), with configurable max size
 - the msg struct `sizeof()` ... can't avoid this
-- a callback function that handles the stuff when received
+- an application callback function that handles the stuff when received
 
 Then we'll have our regular loop feeding the parser with the `neon_parse_char(...)` function.
 
 When a msg is parsed, its payload is dispatched to an handler function that can pack/unpack the message based on the sizeof() that we linked to the specific msg type, and then will call the right application callback.
 
-Refer to `example1.cpp` in this repository. 
+Refer to `example1.cpp` in this repository for the actual usage, I also commented some look-like for Arduino lovers. 
 
 ### Things to be aware of
 
