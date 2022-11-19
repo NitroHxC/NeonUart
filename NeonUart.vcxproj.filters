@@ -18,12 +18,15 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UartParser\m_uart_parser.c">
+    <ClCompile Include="example1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NeonUart\neon_uart.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UartParser\m_uart_parser.h">
+    <ClInclude Include="NeonUart\neon_uart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

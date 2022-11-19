@@ -1,6 +1,3 @@
-// DynamicUartParser.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include <stdint.h>
 
@@ -20,7 +17,7 @@ void print_debug(uint8_t* buf, uint16_t len)
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    std::cout << "Hello Neon!\n";
 
     example1();
 }
