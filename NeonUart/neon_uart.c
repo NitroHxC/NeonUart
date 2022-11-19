@@ -13,7 +13,7 @@
  **                                 Private Function Prototypes
  **===============================================================================================*/
 static void neon_parser_dispatch(neon_parser_t *pParser);
-static void neon_report_unhandled(neon_parser_t *pParser, uint8_t msgid);
+static void neon_report_unhandled(neon_parser_t *pParser, uint8_t msg_id);
 
 static uint8_t neon_parser_build_message(uint8_t *pay, uint16_t paylen, uint8_t type, uint8_t *msg_out);
 static void neon_parser_checksum(uint8_t *packet, uint16_t size, uint16_t offset, uint8_t *ans);
@@ -87,16 +87,16 @@ parser_flag_t neon_parse_char(neon_parser_t *pParser, uint8_t b)
     else if (pParser->state == GOT_SYNC2)
     {
 
-        pParser->state = GOT_CLASS;
-        pParser->msgclass = b;
+        pParser->state = GOT_FAMILY;
+        pParser->msg_family = b;
         neon_parser_addchk(pParser, b);
     }
 
-    else if (pParser->state == GOT_CLASS)
+    else if (pParser->state == GOT_FAMILY)
     {
 
         pParser->state = GOT_ID;
-        pParser->msgid = b;
+        pParser->msg_id = b;
         neon_parser_addchk(pParser, b);
     }
 
@@ -127,7 +127,7 @@ parser_flag_t neon_parse_char(neon_parser_t *pParser, uint8_t b)
         }
         else if (pParser->msglen == 0)
         {
-            neon_report_unhandled(pParser, pParser->msgid);
+            neon_report_unhandled(pParser, pParser->msg_id);
             neon_parser_reset(pParser);
         }
         neon_parser_addchk(pParser, b);
@@ -167,11 +167,11 @@ parser_flag_t neon_parse_char(neon_parser_t *pParser, uint8_t b)
     return NOT_PARSED;
 }
 
-static void neon_report_unhandled(neon_parser_t *pParser, uint8_t msgid)
+static void neon_report_unhandled(neon_parser_t *pParser, uint8_t msg_id)
 {
     if (pParser->unhandled_cb != NULL)
     {
-        pParser->unhandled_cb(msgid);
+        pParser->unhandled_cb(msg_id);
     }
 }
 
@@ -182,25 +182,25 @@ static void neon_parser_dispatch(neon_parser_t *pParser)
     if (pCb == NULL)
         return; // uninitialized, we shouldn't be here
 
-    if (pCb->cb[pParser->msgid].msg_size == 0)
+    if (pCb->cb[pParser->msg_id].msg_size == 0)
     {
-        neon_report_unhandled(pParser, pParser->msgid);
+        neon_report_unhandled(pParser, pParser->msg_id);
         return;
     }
 
-    neon_message_handler(pParser, HANDLER_CB_RX, pParser->msgid, pParser->payload, NULL);
+    neon_message_handler(pParser, HANDLER_CB_RX, pParser->msg_id, pParser->payload, NULL);
 
 #if 0
     // Get Handler callback ptr
-    handler_callback_t pCallback = neon_parser_get_cbs(pParser)->cb[pParser->msgid].h;
+    handler_callback_t pCallback = neon_parser_get_cbs(pParser)->cb[pParser->msg_id].h;
 
     if (pCallback != NULL)
     {
-        pCallback(pParser, CBH_RX, pParser->msgid, pParser->payload, NULL);
+        pCallback(pParser, CBH_RX, pParser->msg_id, pParser->payload, NULL);
     }
     else
     {
-        neon_report_unhandled(pParser, pParser->msgid);
+        neon_report_unhandled(pParser, pParser->msg_id);
     }
 #endif
 }
@@ -226,7 +226,7 @@ static uint8_t neon_parser_build_message(uint8_t *pay, uint16_t paylen, uint8_t 
     uint8_t pos = 0;
     msg_out[pos++] = MAGIC1;
     msg_out[pos++] = MAGIC2;
-    msg_out[pos++] = 0x80;   // Class, dummy
+    msg_out[pos++] = 0x80;   // Family ID, dummy
     msg_out[pos++] = type;   // MSG/CMD ID
     msg_out[pos++] = paylen; // Len
     msg_out[pos++] = paylen >> 8;
@@ -255,8 +255,8 @@ static uint8_t neon_parser_build_message(uint8_t *pay, uint16_t paylen, uint8_t 
 void neon_parser_reset(neon_parser_t *pParser)
 {
     pParser->state = GOT_NONE;
-    pParser->msgclass = -1;
-    pParser->msgid = -1;
+    pParser->msg_family = -1;
+    pParser->msg_id = -1;
     pParser->msglen = -1;
     pParser->chka = -1;
     pParser->chkb = -1;
@@ -296,15 +296,15 @@ uint8_t neon_build_message(neon_parser_t *pParser, uint8_t *pay, uint16_t paylen
     return neon_message_handler(pParser, HANDLER_CB_TX, type, pay, msg_out);
 #if 0
     // Get callback ptr
-    handler_callback_t pCallback = neon_parser_get_cbs(pParser)->cb[pParser->msgid].h;
+    handler_callback_t pCallback = neon_parser_get_cbs(pParser)->cb[pParser->msg_id].h;
 
     if (pCallback != NULL)
     {
-        pCallback(pParser, CBH_TX, pParser->msgid, pParser->payload, msg_out);
+        pCallback(pParser, CBH_TX, pParser->msg_id, pParser->payload, msg_out);
     }
     else
     {
-        neon_report_unhandled(pParser, pParser->msgid);
+        neon_report_unhandled(pParser, pParser->msg_id);
     }
 #endif
 }

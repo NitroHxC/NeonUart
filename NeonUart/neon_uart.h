@@ -26,7 +26,7 @@ typedef enum
     GOT_NONE = 0,
     GOT_SYNC1 = 1,
     GOT_SYNC2 = 2,
-    GOT_CLASS = 3,
+    GOT_FAMILY = 3,
     GOT_ID = 4,
     GOT_LENGTH1 = 5,
     GOT_LENGTH2 = 6,
@@ -50,15 +50,15 @@ typedef void (*unhandled_callback_t)(uint8_t type);
 
 typedef struct
 {
-    /* Message structure: 0xEC 0x9F 0x80 <type> <lenL> <lenH> <...payload...> <crc1><crc2> */
+    /* Message structure: 0xEC 0x9F <family> <type> <lenL> <lenH> <...payload...> <crc1><crc2> */
     parser_state_t state;
-    uint8_t msgclass;
-    uint8_t msgid;
-    uint16_t msglen;
+    uint8_t msg_family;
+    uint8_t msg_id;
+    uint16_t msg_len;
     uint8_t chka;
     uint8_t chkb;
     uint16_t count;
-    uint16_t errorcount;
+    uint16_t error_count;
     uint8_t payload[N_MAX_PAYLOAD];
     void *cbs;                         // cb register for Handlers and App callbacks, to be cast to parser_callbacks_t*
     unhandled_callback_t unhandled_cb; // cb for unhandled function
@@ -82,16 +82,16 @@ typedef struct
 /**=================================================================================================
  **                                  Public Functions
  **===============================================================================================*/
-void uart_parser_init(neon_parser_t *pParser);
+void neon_parser_init(neon_parser_t *pParser);
 void neon_parser_deinit(neon_parser_t *pParser);
-void uart_parser_reset(neon_parser_t *pParser);
+void neon_parser_reset(neon_parser_t *pParser);
 
 // Application Callbacks
-void uart_parser_set_cb(neon_parser_t *pParser, uint8_t msg_type, app_callback_t cb);
-void uart_parser_set_unhandled_cb(neon_parser_t *pParser, unhandled_callback_t cb);
+void neon_parser_set_cb(neon_parser_t *pParser, uint8_t msg_type, app_callback_t cb);
+void neon_parser_set_unhandled_cb(neon_parser_t *pParser, unhandled_callback_t cb);
 
 // TX
-void uart_define_message(neon_parser_t *pParser, uint8_t msg_type, uint16_t length, app_callback_t cb);
+void neon_define_message(neon_parser_t *pParser, uint8_t msg_type, uint16_t length, app_callback_t cb);
 uint8_t neon_build_message(neon_parser_t *pParser, uint8_t *pay, uint16_t paylen, uint8_t type, uint8_t *msg_out);
 
 // RX

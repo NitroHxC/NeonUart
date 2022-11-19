@@ -56,19 +56,19 @@ void example1()
     /* 3. create Parser object. */
     neon_parser_t parser1 = neon_parser_t(); // Usually in plain C we actually initialize with = {0}
 
-    /* 4. set callback for printing an unhandled Msg ID when received (if needed) */
-    uart_parser_set_unhandled_cb(&parser1, print_unhandled);
+    /* 4. set optional callback for printing an unhandled Msg ID when received (if needed) */
+    neon_parser_set_unhandled_cb(&parser1, print_unhandled);
 
     /* 5. define messages dynamically:
         Every Msg ID is linked to a struct and to an application-defined callback. 
         The Parser callback array are allocated on the first call to this function */
 
-    uart_define_message(&parser1, MSG1_ID, sizeof(myMsg1_t), callback_msg1);
+    neon_define_message(&parser1, MSG1_ID, sizeof(myMsg1_t), callback_msg1);
 
-    uart_define_message(&parser1, MSG2_ID, sizeof(myMsg2_t), callback_msg2);
+    neon_define_message(&parser1, MSG2_ID, sizeof(myMsg2_t), callback_msg2);
 
     /* 6. Initialize object */
-    uart_parser_init(&parser1);
+    neon_parser_init(&parser1);
 
     std::cout << "Footprint of the parser: " << std::dec << (int)sizeof(parser1) << " bytes" << std::endl;
 
