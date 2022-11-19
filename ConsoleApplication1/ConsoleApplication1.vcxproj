@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleApplication1.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="UartParser\src\m_uart_handlers.c" />
     <ClCompile Include="UartParser\src\m_uart_msgs.c" />
     <ClCompile Include="UartParser\src\m_uart_parser.c" />
