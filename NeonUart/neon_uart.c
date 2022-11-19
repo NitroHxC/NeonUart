@@ -128,7 +128,7 @@ parser_flag_t neon_parse_char(neon_parser_t *pParser, uint8_t b)
         else if (pParser->msglen == 0)
         {
             neon_report_unhandled(pParser, pParser->msgid);
-            uart_parser_reset(pParser);
+            neon_parser_reset(pParser);
         }
         neon_parser_addchk(pParser, b);
         pParser->payload[pParser->count] = b;
@@ -153,14 +153,14 @@ parser_flag_t neon_parse_char(neon_parser_t *pParser, uint8_t b)
         if (b == pParser->chkb)
         {
             neon_parser_dispatch(pParser);
-            uart_parser_reset(pParser);
+            neon_parser_reset(pParser);
             return PARSED;
         }
         else
         {
             pParser->state = GOT_NONE;
             pParser->errorcount++;
-            uart_parser_reset(pParser);
+            neon_parser_reset(pParser);
         }
     }
 
@@ -252,7 +252,7 @@ static uint8_t neon_parser_build_message(uint8_t *pay, uint16_t paylen, uint8_t 
 /***************************************************************************************************
  ** Description    : description for a function
  **************************************************************************************************/
-void uart_parser_reset(neon_parser_t *pParser)
+void neon_parser_reset(neon_parser_t *pParser)
 {
     pParser->state = GOT_NONE;
     pParser->msgclass = -1;
@@ -263,9 +263,9 @@ void uart_parser_reset(neon_parser_t *pParser)
     pParser->count = 0;
 }
 
-void uart_parser_init(neon_parser_t *pParser)
+void neon_parser_init(neon_parser_t *pParser)
 {
-    uart_parser_reset(pParser);
+    neon_parser_reset(pParser);
     pParser->errorcount = 0;
 }
 
@@ -274,7 +274,7 @@ void neon_parser_deinit(neon_parser_t *pParser)
     neon_parser_free(pParser);
 }
 
-void uart_define_message(neon_parser_t *pParser, uint8_t msg_type, uint16_t length, app_callback_t cb)
+void neon_define_message(neon_parser_t *pParser, uint8_t msg_type, uint16_t length, app_callback_t cb)
 {
     parser_callbacks_t *pCb = ((parser_callbacks_t *)(pParser->cbs));
     if (pCb == NULL)
@@ -309,7 +309,7 @@ uint8_t neon_build_message(neon_parser_t *pParser, uint8_t *pay, uint16_t paylen
 #endif
 }
 
-void uart_parser_set_cb(neon_parser_t *pParser, uint8_t msg_type, app_callback_t cb)
+void neon_parser_set_cb(neon_parser_t *pParser, uint8_t msg_type, app_callback_t cb)
 {
     if (msg_type >= N_MAX_MSG_TYPES)
         return;
@@ -319,7 +319,7 @@ void uart_parser_set_cb(neon_parser_t *pParser, uint8_t msg_type, app_callback_t
     pCb->cb[msg_type].a = cb; // set App callback
 }
 
-void uart_parser_set_unhandled_cb(neon_parser_t *pParser, unhandled_callback_t cb)
+void neon_parser_set_unhandled_cb(neon_parser_t *pParser, unhandled_callback_t cb)
 {
     pParser->unhandled_cb = cb; // set unhandled callback
 }
