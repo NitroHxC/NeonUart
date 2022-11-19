@@ -45,18 +45,18 @@ static parser_callbacks_t* uart_parser_get_cbs(parser_ctx_t* pParser)
 
 void uart_parser_free(parser_ctx_t* pParser)
 {
-    // free(pParser->cb);
+     free(pParser->cbs);
 }
 
-void uart_message_handler(parser_ctx_t* pParser, uint8_t tx, uint8_t type, uint8_t* payload, uint8_t* output)
+uint8_t uart_message_handler(parser_ctx_t* pParser, uint8_t tx, uint8_t type, uint8_t* payload, uint8_t* output)
 {
     parser_callbacks_t* pCb = ((parser_callbacks_t*)(pParser->cbs));
-    if (pCb == NULL) return; // uninitialized, we shouldn't be here
+    if (pCb == NULL) return 0; // uninitialized, we shouldn't be here
 
     if (tx)
     {
         // Serializer / "packer" 
-        uart_parser_build_message((uint8_t*)payload, pCb->cb[type].msg_size, type, output);
+        return uart_parser_build_message((uint8_t*)payload, pCb->cb[type].msg_size, type, output);
     }
     else
     {
@@ -68,6 +68,7 @@ void uart_message_handler(parser_ctx_t* pParser, uint8_t tx, uint8_t type, uint8
         memcpy(msg, payload, pCb->cb[type].msg_size);
         cb((void*)msg);  // then call the App cb  
         free(msg);
+        return 0;
     }
 }
 
@@ -79,8 +80,7 @@ void uart_parser_addchk(parser_ctx_t* pParser, uint8_t b)
 
 parser_flag_t uart_parse_char(parser_ctx_t* pParser, uint8_t b)
 {
-    if (b == MAGIC1) {
-
+    if (b == MAGIC1 && pParser->state == GOT_NONE) {
         pParser->state = GOT_SYNC1;
     }
 
@@ -248,8 +248,6 @@ static uint8_t uart_parser_build_message(uint8_t* pay, uint16_t paylen, uint8_t 
 /***************************************************************************************************
  ** Description    : description for a function
  **************************************************************************************************/
-
-
 void uart_parser_reset(parser_ctx_t* pParser)
 {
     pParser->state = GOT_NONE;
@@ -265,6 +263,11 @@ void uart_parser_init(parser_ctx_t* pParser)
 {
     uart_parser_reset(pParser);
     pParser->errorcount = 0;
+}
+
+void uart_parser_deinit(parser_ctx_t* pParser)
+{
+    uart_parser_free(pParser);
 }
 
 void uart_define_message(parser_ctx_t* pParser, uint8_t msg_type, uint16_t length, app_callback_t cb)
@@ -285,7 +288,7 @@ void uart_define_message(parser_ctx_t* pParser, uint8_t msg_type, uint16_t lengt
 uint8_t uart_build_message(parser_ctx_t* pParser, uint8_t* pay, uint16_t paylen, uint8_t type, uint8_t* msg_out)
 {
     // Dispatch TO HANDLER to unpack data
-    uart_message_handler(pParser, HANDLER_CB_TX, type, pay, msg_out);
+    return uart_message_handler(pParser, HANDLER_CB_TX, type, pay, msg_out);
 #if 0
     // Get callback ptr
     handler_callback_t pCallback = uart_parser_get_cbs(pParser)->cb[pParser->msgid].h;

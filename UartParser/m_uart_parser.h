@@ -19,15 +19,15 @@
 #define N_MAX_PAYLOAD 256 
 
 typedef enum {
-    GOT_NONE,
-    GOT_SYNC1,
-    GOT_SYNC2,
-    GOT_CLASS,
-    GOT_ID,
-    GOT_LENGTH1,
-    GOT_LENGTH2,
-    GOT_PAYLOAD,
-    GOT_CHKA
+    GOT_NONE    = 0,
+    GOT_SYNC1   = 1,
+    GOT_SYNC2   = 2,
+    GOT_CLASS   = 3,
+    GOT_ID      = 4,
+    GOT_LENGTH1 = 5,
+    GOT_LENGTH2 = 6,
+    GOT_PAYLOAD = 7,
+    GOT_CHKA    = 8
 } parser_state_t;
 
 typedef enum { 
@@ -74,6 +74,7 @@ typedef struct {
    **                                  Public Functions
    **===============================================================================================*/
 void uart_parser_init(parser_ctx_t* pParser);
+void uart_parser_deinit(parser_ctx_t* pParser);
 void uart_parser_reset(parser_ctx_t* pParser);
 
 // Application Callbacks

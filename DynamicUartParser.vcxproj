@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="example1.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="UartParser\m_uart_parser.c" />
   </ItemGroup>

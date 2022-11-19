@@ -4,127 +4,23 @@
 #include <iostream>
 #include <stdint.h>
 
-extern "C" {
-#include "UartParser/m_uart_parser.h"
-}
-
-void print_unhandled(uint8_t type)
-{
-    std::cout << "Unhandled type " << std::dec << (int)type << std::endl;
-    //uint8_t dummy;
-}
-
-//MESSAGE_CB(XMESSAGE, test_buffer)
-//// Do stuff here
-//END_MESSAGE_CB
-
-//
-//void cb_xmessage(void* pv)
-//{
-//    MESSAGE_CALLBACK(XMESSAGE, pv);
-// 
-//    //XMESSAGE_t* msg = (XMESSAGE_t*)pv;
-//    // DO STUFF with unpacked data
-//    std::cout << "Override setpoint! " << std::endl;
-//
-//    // At the end of this scope data is going to be destroyed
-//}
-
-typedef struct {
-    float f1;
-    int i2;
-    char c3;
-} msg1_t;
-
-void callback03(void* pv)
-{
-    //msg1_t* msg = (msg1_t*)pv;
-    msg1_t msg = { 0 };
-    memcpy(&msg, pv, sizeof(msg1_t));
-    std::cout << "We are in the callback! values: " << std::dec << (float)msg.f1 << " , " << (int)msg.i2 << " , " << (int)msg.c3 << std::endl;
-}
+extern void example1();
 
 void print_debug(uint8_t* buf, uint16_t len)
 {
+    // Print outbound buffer
+    std::cout << "Message: " << std::endl;
     for (uint8_t i = 0; i < len; i++)
     {
-        std::cout << "0x" << std::hex << (int)buf[i] << ",";
+        std::cout << "0x" << std::hex << (int)buf[i];
+        if(i != len-1) std::cout << ",";
     }
     std::cout << std::endl;
-}
-
-void test_parse_buffer(parser_ctx_t* parser, uint8_t* buffer, uint16_t maxlen)
-{
-    uart_parser_reset(parser);
-    uint8_t got_type = 0;
-    for (uint16_t i = 0; i < maxlen; i++)
-    {
-
-        if (uart_parse_char(parser, buffer[i])) break;
-
-#if 1
-        if (got_type && parser->state == 0)
-        {
-            // got the unhandled one
-            break;
-        }
-
-        if (parser->state == GOT_ID)
-        {
-            got_type = 1;
-        }
-
-        std::cout << std::dec << "Char " << (int)i << " " << std::hex << "0x" << (int)buffer[i] << " \t --> status : " << (int)parser->state << ", msgid " << (int)parser->msgid << " msgLEN " << (int)parser->msglen << std::endl;
-#endif
-    }
 }
 
 int main()
 {
     std::cout << "Hello World!\n";
 
-    parser_ctx_t parser1 = parser_ctx_t();
-
-    uart_parser_set_unhandled_cb(&parser1, print_unhandled);
-
-    uart_define_message(&parser1, 0x03, sizeof(msg1_t), callback03);
-
-    //uart_parser_set_cb(&parser1, MAP_CB(XMESSAGE));
-
-    uart_parser_init(&parser1);
-
-    std::cout << "Footprint of the parser: " << std::dec << (int)sizeof(parser1) << std::endl;
-
-    // Test: build a message
-    uint8_t buffer_out[N_MAX_PAYLOAD] = {0};
-
-    msg1_t out = msg1_t();
-    out.f1 = 666.6f;
-    out.i2 = 999; 
-    out.c3 = 22;
-
-    uart_build_message(&parser1, (uint8_t*)&out, sizeof(msg1_t), 0x03, buffer_out);
-
-    print_debug(buffer_out, sizeof(msg1_t));
-
-    // parse the built buffer to get the initial data
-    test_parse_buffer(&parser1, buffer_out, N_MAX_PAYLOAD);
-
-    // Now test an unhandled callback
-    memset(buffer_out, 0, N_MAX_PAYLOAD);
-    uart_build_message(&parser1, (uint8_t*)&out, sizeof(msg1_t), 0x05, buffer_out);
-
-    // We expect to call the unhandled callback
-    test_parse_buffer(&parser1, buffer_out, N_MAX_PAYLOAD);
+    example1();
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
