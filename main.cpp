@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 extern "C" {
-#include "m_uart_parser.h"
+#include "UartParser/m_uart_parser.h"
 }
 uint8_t test_buffer[64] = { 0 };
 
@@ -73,7 +73,6 @@ int main()
     {
         std::cout << "0x" << std::hex << (int)buffer_out[i] << ",";
     }
-
     std::cout << std::endl;
     
     // parse the built buffer to get the initial data
@@ -81,11 +80,13 @@ int main()
     uint8_t has_chk = 0;
     for (uint16_t i = 0; i < N_MAX_PAYLOAD; i++)
     {
+        
         uart_parse_char(&parser1, buffer_out[i]);
 
+#if 0
         std::cout << std::dec << "Char " <<(int)i << " " << std::hex << "0x" << (int)buffer_out[i] << " \t --> status : " << parser1.state << ", msgid " << parser1.msgid << " msgLEN " << parser1.msglen << std::endl;
-
-        if (has_chk)
+    
+        if (has_chk) // last step was a checksum
         {
             if (buffer_out[i] == parser1.chkb)
             {
@@ -97,8 +98,9 @@ int main()
         if (parser1.state == GOT_CHKA)
         {
             has_chk = 1;
-            
+
         }
+#endif
     }
 
 }

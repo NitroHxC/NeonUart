@@ -112,76 +112,76 @@ void uart_parser_addchk(parser_ctx_t* pParser, uint8_t b)
 }
 
 void uart_parse_char(parser_ctx_t* pParser, uint8_t b)
-	{
-		if (b == MAGIC1) {
+{
+	if (b == MAGIC1) {
 
-			pParser->state = GOT_SYNC1;
-		}
+		pParser->state = GOT_SYNC1;
+	}
 
-		else if (b == MAGIC2 && pParser->state == GOT_SYNC1) {
+	else if (b == MAGIC2 && pParser->state == GOT_SYNC1) {
 
-			pParser->state = GOT_SYNC2;
-			pParser->chka = 0;
-			pParser->chkb = 0;
-		}
+		pParser->state = GOT_SYNC2;
+		pParser->chka = 0;
+		pParser->chkb = 0;
+	}
 
-		else if (pParser->state == GOT_SYNC2) {
+	else if (pParser->state == GOT_SYNC2) {
 
-			pParser->state = GOT_CLASS;
-			pParser->msgclass = b;
-			uart_parser_addchk(pParser, b);
-		}
+		pParser->state = GOT_CLASS;
+		pParser->msgclass = b;
+		uart_parser_addchk(pParser, b);
+	}
 
-		else if (pParser->state == GOT_CLASS) {
+	else if (pParser->state == GOT_CLASS) {
 
-			pParser->state = GOT_ID;
-			pParser->msgid = b;
-			uart_parser_addchk(pParser, b);
-		}
+		pParser->state = GOT_ID;
+		pParser->msgid = b;
+		uart_parser_addchk(pParser, b);
+	}
 
-		else if (pParser->state == GOT_ID) {
+	else if (pParser->state == GOT_ID) {
 
-			pParser->state = GOT_LENGTH1;
-			pParser->msglen = b;
-			uart_parser_addchk(pParser, b);
-		}
+		pParser->state = GOT_LENGTH1;
+		pParser->msglen = b;
+		uart_parser_addchk(pParser, b);
+	}
 
-		else if (pParser->state == GOT_LENGTH1) {
+	else if (pParser->state == GOT_LENGTH1) {
 
-			pParser->state = GOT_LENGTH2;
-			pParser->msglen += (b << 8);
-			pParser->count = 0;
-			uart_parser_addchk(pParser, b);
-		}
+		pParser->state = GOT_LENGTH2;
+		pParser->msglen += (b << 8);
+		pParser->count = 0;
+		uart_parser_addchk(pParser, b);
+	}
 
-		else if (pParser->state == GOT_LENGTH2) {
+	else if (pParser->state == GOT_LENGTH2) {
 
-			uart_parser_addchk(pParser, b);
-			pParser->payload[pParser->count] = b;
-			pParser->count += 1;
+		uart_parser_addchk(pParser, b);
+		pParser->payload[pParser->count] = b;
+		pParser->count += 1;
 
-			if (pParser->count == pParser->msglen) {
+		if (pParser->count == pParser->msglen) {
 
-				pParser->state = GOT_PAYLOAD;
-			}
-		}
-
-		else if (pParser->state == GOT_PAYLOAD) {
-
-			pParser->state = (b == pParser->chka) ? GOT_CHKA : GOT_NONE;
-		}
-
-		else if (pParser->state == GOT_CHKA) {
-
-			if (b == pParser->chkb) {
-				uart_parser_dispatch(pParser);
-			}
-
-			else {
-				pParser->state = GOT_NONE;
-			}
+			pParser->state = GOT_PAYLOAD;
 		}
 	}
+
+	else if (pParser->state == GOT_PAYLOAD) {
+
+		pParser->state = (b == pParser->chka) ? GOT_CHKA : GOT_NONE;
+	}
+
+	else if (pParser->state == GOT_CHKA) {
+
+		if (b == pParser->chkb) {
+			uart_parser_dispatch(pParser);
+		}
+
+		else {
+			pParser->state = GOT_NONE;
+		}
+	}
+}
 
 void uart_report_unhandled(parser_ctx_t* pParser, uint8_t msgid)
 {

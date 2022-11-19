@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PublicIncludeDirectories>C:\Users\andre\source\repos\DynamicUartParser\DynamicUartParser\UartParser\inc;$(PublicIncludeDirectories)</PublicIncludeDirectories>
+    <PublicIncludeDirectories>C:\Users\andre\source\repos\DynamicUartParser\UartParser\inc;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,7 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\andre\source\repos\DynamicUartParser\DynamicUartParser\UartParser\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\andre\source\repos\DynamicUartParser\UartParser\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,16 +132,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="UartParser\src\m_uart_handlers.c" />
-    <ClCompile Include="UartParser\src\m_uart_msgs.c" />
-    <ClCompile Include="UartParser\src\m_uart_parser.c" />
+    <ClCompile Include="UartParser\m_uart_handlers.c" />
+    <ClCompile Include="UartParser\m_uart_msgs.c" />
+    <ClCompile Include="UartParser\m_uart_parser.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UartParser\inc\m_uart_config.h" />
-    <ClInclude Include="UartParser\inc\m_uart_handlers.h" />
-    <ClInclude Include="UartParser\inc\m_uart_macros.h" />
-    <ClInclude Include="UartParser\inc\m_uart_msgs.h" />
-    <ClInclude Include="UartParser\inc\m_uart_parser.h" />
+    <ClInclude Include="UartParser\m_uart_config.h" />
+    <ClInclude Include="UartParser\m_uart_handlers.h" />
+    <ClInclude Include="UartParser\m_uart_macros.h" />
+    <ClInclude Include="UartParser\m_uart_msgs.h" />
+    <ClInclude Include="UartParser\m_uart_parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
