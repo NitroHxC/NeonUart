@@ -7,7 +7,6 @@
 extern "C" {
 #include "UartParser/m_uart_parser.h"
 }
-uint8_t test_buffer[64] = { 0 };
 
 void print_unhandled(uint8_t type)
 {
@@ -45,6 +44,41 @@ void callback03(void* pv)
     std::cout << "We are in the callback! values: " << std::dec << (float)msg.f1 << " , " << (int)msg.i2 << " , " << (int)msg.c3 << std::endl;
 }
 
+void print_debug(uint8_t* buf, uint16_t len)
+{
+    for (uint8_t i = 0; i < len; i++)
+    {
+        std::cout << "0x" << std::hex << (int)buf[i] << ",";
+    }
+    std::cout << std::endl;
+}
+
+void test_parse_buffer(parser_ctx_t* parser, uint8_t* buffer, uint16_t maxlen)
+{
+    uart_parser_reset(parser);
+    uint8_t got_type = 0;
+    for (uint16_t i = 0; i < maxlen; i++)
+    {
+
+        if (uart_parse_char(parser, buffer[i])) break;
+
+#if 1
+        if (got_type && parser->state == 0)
+        {
+            // got the unhandled one
+            break;
+        }
+
+        if (parser->state == GOT_ID)
+        {
+            got_type = 1;
+        }
+
+        std::cout << std::dec << "Char " << (int)i << " " << std::hex << "0x" << (int)buffer[i] << " \t --> status : " << (int)parser->state << ", msgid " << (int)parser->msgid << " msgLEN " << (int)parser->msglen << std::endl;
+#endif
+    }
+}
+
 int main()
 {
     std::cout << "Hello World!\n";
@@ -53,11 +87,13 @@ int main()
 
     uart_parser_set_unhandled_cb(&parser1, print_unhandled);
 
-    uart_create_message(&parser1, 0x03, sizeof(msg1_t), callback03);
+    uart_define_message(&parser1, 0x03, sizeof(msg1_t), callback03);
 
     //uart_parser_set_cb(&parser1, MAP_CB(XMESSAGE));
 
     uart_parser_init(&parser1);
+
+    std::cout << "Footprint of the parser: " << std::dec << (int)sizeof(parser1) << std::endl;
 
     // Test: build a message
     uint8_t buffer_out[N_MAX_PAYLOAD] = {0};
@@ -69,40 +105,17 @@ int main()
 
     uart_build_message(&parser1, (uint8_t*)&out, sizeof(msg1_t), 0x03, buffer_out);
 
-    for (uint8_t i = 0; i < sizeof(msg1_t); i++)
-    {
-        std::cout << "0x" << std::hex << (int)buffer_out[i] << ",";
-    }
-    std::cout << std::endl;
-    
+    print_debug(buffer_out, sizeof(msg1_t));
+
     // parse the built buffer to get the initial data
-    uart_parser_reset(&parser1);
-    uint8_t has_chk = 0;
-    for (uint16_t i = 0; i < N_MAX_PAYLOAD; i++)
-    {
-        
-        uart_parse_char(&parser1, buffer_out[i]);
+    test_parse_buffer(&parser1, buffer_out, N_MAX_PAYLOAD);
 
-#if 0
-        std::cout << std::dec << "Char " <<(int)i << " " << std::hex << "0x" << (int)buffer_out[i] << " \t --> status : " << parser1.state << ", msgid " << parser1.msgid << " msgLEN " << parser1.msglen << std::endl;
-    
-        if (has_chk) // last step was a checksum
-        {
-            if (buffer_out[i] == parser1.chkb)
-            {
-                std::cout << " PARSED!! " << std::endl;
-            }
-            break;
-        }
+    // Now test an unhandled callback
+    memset(buffer_out, 0, N_MAX_PAYLOAD);
+    uart_build_message(&parser1, (uint8_t*)&out, sizeof(msg1_t), 0x05, buffer_out);
 
-        if (parser1.state == GOT_CHKA)
-        {
-            has_chk = 1;
-
-        }
-#endif
-    }
-
+    // We expect to call the unhandled callback
+    test_parse_buffer(&parser1, buffer_out, N_MAX_PAYLOAD);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

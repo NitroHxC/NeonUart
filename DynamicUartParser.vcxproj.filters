@@ -18,29 +18,11 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UartParser\m_uart_handlers.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UartParser\m_uart_msgs.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="UartParser\m_uart_parser.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UartParser\m_uart_config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UartParser\m_uart_handlers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UartParser\m_uart_macros.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UartParser\m_uart_msgs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="UartParser\m_uart_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>

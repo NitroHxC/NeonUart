@@ -132,15 +132,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="UartParser\m_uart_handlers.c" />
-    <ClCompile Include="UartParser\m_uart_msgs.c" />
     <ClCompile Include="UartParser\m_uart_parser.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UartParser\m_uart_config.h" />
-    <ClInclude Include="UartParser\m_uart_handlers.h" />
-    <ClInclude Include="UartParser\m_uart_macros.h" />
-    <ClInclude Include="UartParser\m_uart_msgs.h" />
     <ClInclude Include="UartParser\m_uart_parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
