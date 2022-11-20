@@ -15,12 +15,11 @@ The library is as easy as defining your messages and functions, instantiate an o
 
 #### Frame structure
 
-Uses 2 start/header/magic bytes , 2 bytes for defining a type, 2 bytes of length and 2 bytes of simple checksum
+Uses 2 start/header/magic bytes , 2 bytes for defining a type (the family byte is hardcoded to 0x80 for now, *stay tuned*), 2 bytes of length and 2 bytes of simple checksum
 
 ``` 
  0xEC 0x9D <family> <type> <lenL> <lenH> <...payload...> <crc1><crc2> 
  ```
-
 #### Message definitions
 
 So basically we just define few things that are going to be linked together by calling the `neon_define_message(...)` function:
@@ -58,7 +57,7 @@ Refer to `example2.ino` for a minimal Arduino implementation.
 
 ## Things to be aware of
 
-- beware of **packed** or **unpacked** structs (), you need to be consistent on your devices to avoid byte alignment problems
+- beware of **packed** or **unpacked** structs, you need to be consistent on your devices to avoid byte alignment problems
 - check the different endianness of the devices that are communicating and act accordingly when packing and unpacking data in your application
 
 ## Future development
