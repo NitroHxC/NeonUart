@@ -38,7 +38,7 @@ void loop()
     {
         uint8_t ch = Serial1.read();
 
-        /* 5. Populate your msg as you like */
+        /* 5. Feed the parser with incoming bytes! */
         neon_parse_char(&g_parser, ch);
     }
 
@@ -53,7 +53,7 @@ void loop()
         message_one.i2 = 999;
         message_one.c3 = 22;
 
-        /* 7. build the message in an output buffer */
+        /* 7. Build the message in an output buffer */
         uint8_t buffer_out[32] = {0};
         uint8_t len_out = neon_build_message(&g_parser, (uint8_t*)&message_one, NEON_MSG(myMsg1), buffer_out);
 

@@ -51,6 +51,7 @@ Then we'll have our regular loop feeding the parser with the `neon_parse_char(..
 When a msg is parsed, its payload is dispatched to an handler function that can pack/unpack the message based on the sizeof() that we linked to the specific msg type, and then will call the right application callback.
 
 Refer to `example1.cpp` for a MSVC test implementation.
+
 Refer to `example2.ino` for a minimal Arduino implementation. 
 
 
