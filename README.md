@@ -13,6 +13,8 @@ Even if I work with MCUs, I developed and tested using the MSVC console app you 
 
 The library is as easy as defining your messages and functions, instantiate an object and link some callbacks.
 
+It is also totally agnostic with respect to the UART driver, so it's the user responsibility to read/write from and to the UART peripheral.
+
 #### Frame structure
 
 Uses 2 start/header/magic bytes , 2 bytes for defining a type (the family byte is hardcoded to 0x80 for now, *stay tuned*), 2 bytes of length and 2 bytes of simple checksum
@@ -29,7 +31,7 @@ So basically we just define few things that are going to be linked together by c
 - an application callback function that handles the stuff when received
 
 To ease the usage a bit, I've added 2 macros for defining the Struct and the ID at the same time:
-- `NEON_DEF(NAME,TYPE)` in one line it defines the struct name with a _t suffix and also an enum containing the TYPE/ID
+- `NEON_DEF(NAME,TYPE)` in one line it defines the struct name and also an enum containing the TYPE/ID
 - `NEON_MSG(NAME)` extracts the `sizeof(), TYPE` to pass it in the arg/param list of functions
 
 Example usage for message definition:
