@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "NeonUart/neon_uart.h"
+#include "neon_uart.h"
 
 extern void print_debug(uint8_t* buf, uint16_t len);
 void test_parse_buffer(neon_parser_t* parser, uint8_t* buffer, uint16_t maxlen);

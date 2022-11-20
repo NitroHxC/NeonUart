@@ -18,15 +18,15 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="example1.cpp">
+    <ClCompile Include="..\examples\example1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NeonUart\neon_uart.c">
+    <ClCompile Include="..\neon_uart.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NeonUart\neon_uart.h">
+    <ClInclude Include="..\neon_uart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
