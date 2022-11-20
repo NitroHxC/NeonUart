@@ -13,20 +13,7 @@ Even if I work with MCUs, I developed and tested using the MSVC console app you 
 
 The library is as easy as defining your messages and functions, instantiate an object and link some callbacks.
 
-So basically we just define few things that are going to be linked together by calling the `neon_define_message(...)` function:
-- the `msg ID` (between 0 and 255 . A "Family" byte is already there for future dev, so we'll have up to 65535 messages)
-- the msg struct (the actual stuff you want to send), with configurable max size
-- the msg struct `sizeof()` ... can't avoid this
-- an application callback function that handles the stuff when received
-
-Then we'll have our regular loop feeding the parser with the `neon_parse_char(...)` function.
-
-When a msg is parsed, its payload is dispatched to an handler function that can pack/unpack the message based on the sizeof() that we linked to the specific msg type, and then will call the right application callback.
-
-Refer to `example1.cpp` in this repository for the actual usage.
-Refer to `example2.ino` for a minimal Arduino implementation. 
-
-## Frame structure
+#### Frame structure
 
 Uses 2 start/header/magic bytes , 2 bytes for defining a type, 2 bytes of length and 2 bytes of simple checksum
 
@@ -34,9 +21,44 @@ Uses 2 start/header/magic bytes , 2 bytes for defining a type, 2 bytes of length
  0xEC 0x9D <family> <type> <lenL> <lenH> <...payload...> <crc1><crc2> 
  ```
 
+#### Message definitions
+
+So basically we just define few things that are going to be linked together by calling the `neon_define_message(...)` function:
+- the msg struct (the actual stuff you want to send), with configurable max size
+- the `msg ID` (between 0 and 255 . A "Family" byte is already there for future dev, so we'll have up to 65535 messages)
+- the msg struct `sizeof()` ... can't avoid this, see below for *the Macro trick*
+- an application callback function that handles the stuff when received
+
+To ease the usage a bit, I've added 2 macros for defining the Struct and the ID at the same time:
+- `NEON_DEF(NAME,TYPE)` in one line it defines the struct name with a _t suffix and also an enum containing the TYPE/ID
+- `NEON_MSG(NAME)` extracts the `sizeof(), TYPE` to pass it in the arg/param list of functions
+
+Example usage for message definition:
+```
+typedef struct {
+    uint16_t field1;
+    uint16_t field2;
+} NEON_DEF(myMessageName, 0x01);
+```
+
+Example usage linking msg to callback:
+
+```
+neon_define_message(&parser_object, NEON_MSG(myMessageName), callback);
+```
+
+Then we'll have our regular loop feeding the parser with the `neon_parse_char(...)` function.
+
+When a msg is parsed, its payload is dispatched to an handler function that can pack/unpack the message based on the sizeof() that we linked to the specific msg type, and then will call the right application callback.
+
+Refer to `example1.cpp` for a MSVC test implementation.
+Refer to `example2.ino` for a minimal Arduino implementation. 
+
+
+
 ## Things to be aware of
 
-- beware of **packed** or **unpacked** structs, you need to be consistent on your devices to avoid byte alignment problems
+- beware of **packed** or **unpacked** structs (), you need to be consistent on your devices to avoid byte alignment problems
 - check the different endianness of the devices that are communicating and act accordingly when packing and unpacking data in your application
 
 ## Future development
