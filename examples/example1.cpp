@@ -11,7 +11,7 @@ typedef struct {
     float f1;
     int i2;
     char c3;
-} NEON_DEF(myMsg1, 0x03);
+} NEON_DEF(myMsg1_t, 0x03);
 
 typedef struct {
     uint16_t u1;
@@ -23,7 +23,7 @@ typedef struct {
     char c3;
     float f1;
     float f2;
-} NEON_DEF(myMsg2, 0x09);
+} NEON_DEF(myMsg2_t, 0x09);
 
 /* 1. The callback will handle the received data */
 void callback_msg1(void* pv)
@@ -59,9 +59,9 @@ void example1()
         Every Msg ID is linked to a struct and to an application-defined callback. 
         The Parser callback array are allocated on the first call to this function */
 
-    neon_define_message(&parser1, NEON_MSG(myMsg1), callback_msg1);
+    neon_define_message(&parser1, NEON_MSG(myMsg1_t), callback_msg1);
 
-    neon_define_message(&parser1, NEON_MSG(myMsg2), callback_msg2);
+    neon_define_message(&parser1, NEON_MSG(myMsg2_t), callback_msg2);
 
     /* 6. Initialize object */
     neon_parser_init(&parser1);
@@ -80,7 +80,7 @@ void example1()
     message_one.i2 = 999;
     message_one.c3 = 22;
 
-    uint8_t len_out = neon_build_message(&parser1, (uint8_t*)&message_one, NEON_MSG(myMsg1), buffer_out);
+    uint8_t len_out = neon_build_message(&parser1, (uint8_t*)&message_one, NEON_MSG(myMsg1_t), buffer_out);
     
     /* In a real application, you will likely call (Arduino-style)
     *   Serial.write(buffer_out, len_out); 
@@ -117,7 +117,7 @@ void example1()
     message_two.u3 = 0xBEEF;
     message_two.u4 = 0xCAFE;
 
-    len_out = neon_build_message(&parser1, (uint8_t*)&message_two, NEON_MSG(myMsg2), buffer_out);
+    len_out = neon_build_message(&parser1, (uint8_t*)&message_two, NEON_MSG(myMsg2_t), buffer_out);
 
     // Write the buffer out
     print_debug(buffer_out, len_out);

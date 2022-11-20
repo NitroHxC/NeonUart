@@ -10,7 +10,7 @@ typedef struct {
     float f1;
     int i2;
     char c3;
-} NEON_DEF(myMsg1, 0x03);
+} NEON_DEF(myMsg1_t, 0x03);
 
 /* 2. define what happens when we receive the message */
 void callback_msg1(void* pv)
@@ -28,7 +28,7 @@ void setup()
     Serial1.begin(115200); // Serial used for Neon, attached to some other Arduino device
 
     /* 3. What we defined in steps 1 and 2 is being linked/registered together */
-    neon_define_message(&g_parser, NEON_MSG(myMsg1), callback_msg1);
+    neon_define_message(&g_parser, NEON_MSG(myMsg1_t), callback_msg1);
 }
 
 void loop()
@@ -55,7 +55,7 @@ void loop()
 
         /* 7. Build the message in an output buffer */
         uint8_t buffer_out[32] = {0};
-        uint8_t len_out = neon_build_message(&g_parser, (uint8_t*)&message_one, NEON_MSG(myMsg1), buffer_out);
+        uint8_t len_out = neon_build_message(&g_parser, (uint8_t*)&message_one, NEON_MSG(myMsg1_t), buffer_out);
 
         /* 8. Send it out! */
         Serial1.write(buffer_out, len_out);
