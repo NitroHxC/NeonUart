@@ -1,22 +1,18 @@
 #include <iostream>
 #include <stdint.h>
 
-extern "C" {
 #include "NeonUart/neon_uart.h"
-}
 
 extern void print_debug(uint8_t* buf, uint16_t len);
 void test_parse_buffer(neon_parser_t* parser, uint8_t* buffer, uint16_t maxlen);
 
 /* 0. Define a message/struct */
-#define MSG1_ID 0x03
 typedef struct {
     float f1;
     int i2;
     char c3;
-} myMsg1_t;
+} NEON_DEF(myMsg1, 0x03);
 
-#define MSG2_ID 0x09
 typedef struct {
     uint16_t u1;
     uint16_t u2;
@@ -27,7 +23,7 @@ typedef struct {
     char c3;
     float f1;
     float f2;
-} myMsg2_t;
+} NEON_DEF(myMsg2, 0x09);
 
 /* 1. The callback will handle the received data */
 void callback_msg1(void* pv)
@@ -63,9 +59,9 @@ void example1()
         Every Msg ID is linked to a struct and to an application-defined callback. 
         The Parser callback array are allocated on the first call to this function */
 
-    neon_define_message(&parser1, MSG1_ID, sizeof(myMsg1_t), callback_msg1);
+    neon_define_message(&parser1, NEON_MSG(myMsg1), callback_msg1);
 
-    neon_define_message(&parser1, MSG2_ID, sizeof(myMsg2_t), callback_msg2);
+    neon_define_message(&parser1, NEON_MSG(myMsg2), callback_msg2);
 
     /* 6. Initialize object */
     neon_parser_init(&parser1);
@@ -84,7 +80,7 @@ void example1()
     message_one.i2 = 999;
     message_one.c3 = 22;
 
-    uint8_t len_out = neon_build_message(&parser1, (uint8_t*)&message_one, sizeof(myMsg1_t), 0x03, buffer_out);
+    uint8_t len_out = neon_build_message(&parser1, (uint8_t*)&message_one, NEON_MSG(myMsg1), buffer_out);
     
     /* In a real application, you will likely call (Arduino-style)
     *   Serial.write(buffer_out, len_out); 
@@ -99,7 +95,8 @@ void example1()
     /* 9. Test 2 : send a message with wrong ID (0x05 instead of 0x03) */
     // Let's test the unhandled callback
     memset(buffer_out, 0, N_MAX_PAYLOAD);
-    len_out = neon_build_message(&parser1, (uint8_t*)&message_one, sizeof(myMsg1_t), 0x05, buffer_out);
+    // Notice that I didn't use the macro because I'm assigning a wrong Msg Type on purpose
+    len_out = neon_build_message(&parser1, (uint8_t*)&message_one, 0x05, sizeof(myMsg1_t), buffer_out);
 
     // We expect the unhandled callback to be triggered now
     test_parse_buffer(&parser1, buffer_out, N_MAX_PAYLOAD);
@@ -120,7 +117,7 @@ void example1()
     message_two.u3 = 0xBEEF;
     message_two.u4 = 0xCAFE;
 
-    len_out = neon_build_message(&parser1, (uint8_t*)&message_two, sizeof(myMsg2_t), MSG2_ID, buffer_out);
+    len_out = neon_build_message(&parser1, (uint8_t*)&message_two, NEON_MSG(myMsg2), buffer_out);
 
     // Write the buffer out
     print_debug(buffer_out, len_out);

@@ -1,7 +1,7 @@
 # NeonUart
 
-### What is it?
-This is my take at developing *yet another* plug-n-play and easy to understand UART protocol.
+## What is it?
+This is my take at developing a *(yet another)* plug-n-play and easy to understand UART protocol.
 
 Usually I find myself in need of a fast implementation just to send small commands between Microcontrollers, and having a simple "drag-n-drop-n-play" library with few API functions for TX and RX some data is of paramount importance. 
 
@@ -9,7 +9,7 @@ I wanted something in plain C as close as an "header-only" lib (not really, just
 
 Even if I work with MCUs, I developed and tested using the MSVC console app you find in this repo... 'cause it's just faster!
 
-### How does it work?
+## How does it work?
 
 The library is as easy as defining your messages and functions, instantiate an object and link some callbacks.
 
@@ -23,14 +23,23 @@ Then we'll have our regular loop feeding the parser with the `neon_parse_char(..
 
 When a msg is parsed, its payload is dispatched to an handler function that can pack/unpack the message based on the sizeof() that we linked to the specific msg type, and then will call the right application callback.
 
-Refer to `example1.cpp` in this repository for the actual usage, I also commented some look-like for Arduino lovers. 
+Refer to `example1.cpp` in this repository for the actual usage.
+Refer to `example2.ino` for a minimal Arduino implementation. 
 
-### Things to be aware of
+## Frame structure
+
+Uses 2 start/header/magic bytes , 2 bytes for defining a type, 2 bytes of length and 2 bytes of simple checksum
+
+``` 
+ 0xEC 0x9D <family> <type> <lenL> <lenH> <...payload...> <crc1><crc2> 
+ ```
+
+## Things to be aware of
 
 - beware of **packed** or **unpacked** structs, you need to be consistent on your devices to avoid byte alignment problems
 - check the different endianness of the devices that are communicating and act accordingly when packing and unpacking data in your application
 
-### Future development
+## Future development
 
 For the very first implementation I just dynamically allocated the full array for the callback registers, but this could be implemented as an hash table or even just a linked list, for minimal memory footprint.
 
