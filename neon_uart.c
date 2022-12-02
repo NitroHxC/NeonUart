@@ -158,7 +158,7 @@ static void neon_parser_dispatch(neon_parser_t *pParser) {
   neon_message_handler(pParser, HANDLER_CB_RX, pParser->msg_id, pParser->payload, NULL);
 }
 
-void neon_parser_addchk(neon_parser_t *pParser, uint8_t b) {
+static void neon_parser_addchk(neon_parser_t *pParser, uint8_t b) {
   pParser->chka = (pParser->chka + b) & 0xFF;
   pParser->chkb = (pParser->chkb + pParser->chka) & 0xFF;
 }
