@@ -20,8 +20,12 @@ extern "C" {
 #define MAGIC2 0x9D
 
 // These macros are a trick for defining and referencing both MSG ID and MSG Struct Typedef
-#define NEON_DEF(NAME,TYPE) NAME ; typedef enum { NAME ##_ID = TYPE } NAME ##_id_t
+#define NEON_DEF(NAME,TYPE) NAME ; typedef enum { NAME ##_ID = TYPE } NAME ##_id_t ; \
+                            void cb_##NAME (void* pv)
+#define NEON_CB(NAME) void cb_##NAME (void* pv)
 #define NEON_MSG(NAME) NAME ##_ID, sizeof( NAME )
+#define NEON_MSG_IN(NAME) NAME ##_ID, sizeof( NAME ), cb_##NAME 
+#define NEON_MSG_OUT(NAME) NAME ##_ID, sizeof( NAME ), 0
 
 // Tweak this to reduce footprint, for small apps you will get away with 16
 #define N_MAX_MSG_TYPES 16
