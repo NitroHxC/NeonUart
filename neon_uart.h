@@ -19,7 +19,7 @@ extern "C" {
 #define MAGIC1 0xEC
 #define MAGIC2 0x9D
 
-	  // These macros are a trick for defining and referencing both MSG ID and MSG Struct Typedef
+// These macros are a trick for defining and referencing both MSG ID and MSG Struct Typedef
 #define NEON_DEF(NAME,TYPE) NAME ; typedef enum { NAME ##_ID = TYPE } NAME ##_id_t ; \
                             void cb_##NAME (void* pv)
 #define NEON_CB(NAME) void cb_##NAME (void* pv)
