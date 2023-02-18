@@ -57,10 +57,11 @@ uint8_t neon_message_handler(neon_parser_t* pParser, uint8_t tx, uint8_t type, u
         if(cb == NULL)
             return 0;
 
-        void* msg = malloc(pCb->cb[type].msg_size);
+//        void* msg = malloc(pCb->cb[type].msg_size);
+        static uint8_t msg[64];
         memcpy(msg, payload, pCb->cb[type].msg_size);
         cb((void*)msg); // then call the App cb
-        free(msg);
+//        free(msg);
         return 0;
     }
 }
